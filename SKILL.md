@@ -46,6 +46,51 @@ When optimizing 壁仞 SUPA kernels, consult the knowledge files in `knowledge/`
 - **Compiler**: BRCC (Biren Compiler Collection) — compile with `brcc` command
 - **Environment**: Set `SUPA_VISIBLE_DEVICES` for device selection
 
+## Remote Execution Mode
+
+For optimizing kernels on remote GPU servers (e.g., 壁仞 GPU cluster), use remote execution:
+
+### Configuration
+
+Set environment variables in `HINTS.md` or export them:
+
+```bash
+# Remote server connection
+export REMOTE_HOST="user@192.168.1.100"  # or user@壁仞-gpu-server
+export REMOTE_DIR="/tmp/ako4all_bench"   # remote working directory
+export REMOTE_PYTHON="python3"           # remote Python executable
+```
+
+### How It Works
+
+1. **File Sync**: Solution files are synced to remote server via `rsync`
+2. **Remote Execution**: Benchmark runs on remote GPU via SSH
+3. **Result Fetch**: Results are fetched back to local machine
+4. **Trajectory**: Results stored locally in `trajectory/`
+
+### Requirements
+
+- SSH key-based authentication (no password prompts)
+- `rsync` installed on both local and remote
+- Remote server has required GPU drivers and dependencies
+
+### Example Workflow
+
+```bash
+# In HINTS.md or before running claude:
+export REMOTE_HOST="user@壁仞-server"
+export REMOTE_DIR="/work/ako4all"
+
+# Then optimize as usual
+claude
+# "优化 source/kernel.py"
+```
+
+The agent will automatically:
+1. Sync `solution/`, `scripts/`, `bench/`, `knowledge/` to remote
+2. Execute benchmark on remote GPU
+3. Fetch results and trajectory back locally
+
 ## First action
 
 Before doing anything else, establish the **workspace** — the directory the loop runs in. It is typically the user's CWD, or a subdirectory / path they name in the prompt.

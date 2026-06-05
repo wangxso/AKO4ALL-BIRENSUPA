@@ -2,6 +2,27 @@
 
 Self-contained evaluation script for AKO4ALL. Inlines core logic from [KernelBench](https://github.com/KernelBench/KernelBench) so no external dependency is needed.
 
+## Remote Execution Support
+
+The benchmark supports remote execution on GPU servers via SSH. Configure via environment variables:
+
+```bash
+# Enable remote execution
+export REMOTE_HOST="user@192.168.1.100"
+export REMOTE_DIR="/tmp/ako4all_bench"
+export REMOTE_PYTHON="python3"
+```
+
+When `REMOTE_HOST` is set:
+1. Files are synced to remote via `rsync`
+2. Benchmark runs on remote GPU
+3. Results are fetched back locally
+
+**Requirements:**
+- SSH key-based authentication (no password)
+- `rsync` on both local and remote
+- Remote GPU with drivers installed
+
 ## Setup
 
 When `bench/` is empty (default bench mode), use `bench/kernelbench/bench.py` as the benchmark.

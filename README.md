@@ -181,6 +181,42 @@ For optimizing several related kernels in parallel, in Claude Code the main agen
 
 > ⚠️ **Subagents can't ask back.** In Claude Code, subagents lack `AskUserQuestion`. The main agent composes each subagent's prompt from your instructions plus what's in each kernel's directory; any decision you don't pin down there will fall to `SKILL.md` defaults. So include the things you care about (per-kernel paths, optional reference / inputs locations, language or iteration-cap constraints, custom branch names) — and let the rest default.
 
+### Mode 3 — Remote GPU execution
+
+For optimizing kernels on remote GPU servers (e.g., 壁仞 GPU cluster), configure remote execution:
+
+```bash
+# In HINTS.md or before running claude:
+export REMOTE_HOST="user@192.168.1.100"  # SSH connection
+export REMOTE_DIR="/tmp/ako4all_bench"   # Remote working directory
+export REMOTE_PYTHON="python3"           # Remote Python
+```
+
+**How it works:**
+1. Solution files are synced to remote via `rsync`
+2. Benchmark runs on remote GPU via SSH
+3. Results are fetched back to local machine
+4. Trajectory stored locally in `trajectory/`
+
+**Requirements:**
+- SSH key-based authentication (no password prompts)
+- `rsync` on both local and remote machines
+- Remote GPU with drivers installed (NVIDIA or 壁仞)
+
+**Example workflow:**
+
+```bash
+# Configure remote server
+export REMOTE_HOST="user@壁仞-server"
+export REMOTE_DIR="/work/ako4all"
+
+# Start optimization
+claude
+# "优化 source/kernel.py"
+```
+
+The agent automatically handles file sync, remote execution, and result collection.
+
 ## Requirements
 
 ### Common Requirements
