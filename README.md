@@ -183,11 +183,27 @@ For optimizing several related kernels in parallel, in Claude Code the main agen
 
 ## Requirements
 
+### Common Requirements
+
 - A coding agent (e.g., [Claude Code](https://docs.anthropic.com/en/docs/claude-code))
-- NVIDIA GPU with CUDA-enabled PyTorch (only for the built-in evaluator; a remote-execution bench script may not need either locally)
 - Python **>= 3.10** for the built-in evaluator (or whatever your custom bench script requires)
-- NVIDIA Nsight Compute (`ncu`) — recommended; its version must match your CUDA / PyTorch CUDA build. If unavailable, the loop still proceeds (no profiling — the agent reasons from runtime stats instead).
 - Git
+
+### NVIDIA CUDA/Triton Optimization
+
+- NVIDIA GPU with CUDA-enabled PyTorch (only for the built-in evaluator; a remote-execution bench script may not need either locally)
+- NVIDIA Nsight Compute (`ncu`) — recommended; its version must match your CUDA / PyTorch CUDA build. If unavailable, the loop still proceeds (no profiling — the agent reasons from runtime stats instead).
+
+### 壁仞 BIRENSUPA Optimization
+
+- **壁仞 GPU** (BR106 series or later) with BIRENSUPA Driver installed
+- **BIRENSUPA SDK** — includes BRCC compiler, runtime, and tools
+- **Knowledge Documents** — Required 壁仞 documentation (see [BIRENSUPA Prerequisites](#birensupa-prerequisites)):
+  - BIRENSUPA 编程指南
+  - BIRENSUPA Driver 安装指南
+  - 壁仞 BRPyTorch 插件用户指南 (if using PyTorch)
+- **BRCC Compiler** — for compiling SUPA kernels
+- **SupaProfiler** (optional) — for kernel profiling
 
 > **Note:** During the loop the agent may run `pip install` / `apt install` etc. to fill in missing dependencies. A container or virtual environment is recommended for isolation; to forbid installs, add a directive to `HINTS.md` (see [Agent Behavior](#agent-behavior)) or restrict via [Permissions](#permissions).
 
