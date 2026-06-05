@@ -96,14 +96,55 @@ A kernel and at least one set of test inputs are required. Everything else is op
 Clone the repo directly into Claude Code's skills directory:
 
 ```bash
-git clone https://github.com/TongmingLAIC/AKO4ALL.git ~/.claude/skills/ako4all
+git clone https://github.com/wangxso/AKO4ALL-BIRENSUPA.git ~/.claude/skills/ako4all
 ```
 
 Or, if you already have it cloned somewhere else, symlink it:
 
 ```bash
-ln -s /path/to/AKO4ALL ~/.claude/skills/ako4all
+ln -s /path/to/AKO4ALL-BIRENSUPA ~/.claude/skills/ako4all
 ```
+
+## BIRENSUPA Prerequisites
+
+> **⚠️ Important: 壁仞 BIRENSUPA knowledge documents are NOT included in this repository due to commercial confidentiality.**
+
+To use BIRENSUPA kernel optimization, you **must** obtain the following documents from 壁仞科技 (Biren Technology):
+
+### Required Documents
+
+| Document | Description | Purpose |
+|----------|-------------|---------|
+| BIRENSUPA 编程指南 | Core programming model, kernel functions, memory hierarchy | Understand SUPA programming |
+| BIRENSUPA Driver 安装指南 | Driver installation and setup | Environment setup |
+| 壁仞 BRPyTorch 插件用户指南 | PyTorch integration | Framework support |
+
+### How to Obtain
+
+Contact 壁仞科技产品服务部门 to request these documents. You will need:
+
+1. A valid business relationship with 壁仞科技
+2. Agreement to their confidentiality terms
+3. Proper authorization for document access
+
+### Setup After Obtaining Documents
+
+Once you have the documents:
+
+1. Place them in the `knowledge/` directory:
+   ```bash
+   cp /path/to/壁仞文档/*.md knowledge/
+   ```
+
+2. Verify the files are in place:
+   ```bash
+   ls knowledge/
+   # Should show: BIRENSUPA_编程指南_V1.8.0_202507.md, etc.
+   ```
+
+3. The optimization agent will automatically read these files when optimizing 壁仞 SUPA kernels.
+
+> **Note:** These documents are excluded from git tracking via `.gitignore` to protect commercial information. They remain local to your workspace only.
 
 ## How to Use
 
@@ -226,15 +267,19 @@ For other agents, consult their documentation on permission / auto-approve setti
 ## Repo Layout
 
 ```
-AKO4ALL/
+AKO4ALL-BIRENSUPA/
 ├── SKILL.md              # Entry point — loaded by Claude Code when the skill triggers
 ├── HINTS.md              # Scaffold: agent behavior defaults
 ├── ITERATIONS.md         # Scaffold: iteration log template
 ├── bench-wrapper.sh      # Scaffold: bench script template
-└── bench/kernelbench/    # Scaffold: built-in KernelBench evaluator
+├── bench/kernelbench/    # Scaffold: built-in KernelBench evaluator
+└── knowledge/            # ⚠️ Local only — NOT in git (see BIRENSUPA Prerequisites)
+    └── .gitkeep
 ```
 
 Scaffold files are copied into each workspace on first bootstrap, never overwriting existing files. `README.md`, `LICENSE`, and `assets/` are project metadata — not installed anywhere.
+
+**⚠️ Note about `knowledge/`:** This directory is excluded from git tracking (via `.gitignore`) to protect commercial 壁仞 documents. You must manually obtain and place the BIRENSUPA documents there (see [BIRENSUPA Prerequisites](#birensupa-prerequisites)).
 
 ## Example: SOL-ExecBench
 
