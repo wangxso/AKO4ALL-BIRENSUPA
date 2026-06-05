@@ -1,11 +1,18 @@
 ---
 name: ako4all
-description: Drive an agentic loop that iteratively optimizes a GPU kernel for maximum speedup. Use this skill whenever the user wants to optimize / speed up / benchmark a GPU kernel (CUDA, Triton, TileLang, C++, Python), mentions AKO / AKO4ALL / AKO4X / agentic kernel optimization, asks to "make this kernel faster", or has a kernel they want measured against a PyTorch reference. The skill handles setup, profiling (ncu), correctness checking, iteration logging, and git commits. Bootstraps a workspace in any directory the user points at.
+description: Drive an agentic loop that iteratively optimizes a GPU kernel for maximum speedup. Use this skill whenever the user wants to optimize / speed up / benchmark a GPU kernel (CUDA, Triton, TileLang, CuTe DSL, C++, Python, BIRENSUPA), mentions AKO / AKO4ALL / AKO4X / agentic kernel optimization, asks to "make this kernel faster", or has a kernel they want measured against a PyTorch reference. The skill handles setup, profiling (ncu/suProfiler), correctness checking, iteration logging, and git commits. Bootstraps a workspace in any directory the user points at.
 ---
 
 # AKO4ALL — Agentic Kernel Optimization
 
 Drive a profile → modify → benchmark → log → commit loop on a GPU kernel until it runs faster than the reference. The user provides at minimum a kernel; everything else (reference, inputs, bench script, hints) is optional.
+
+## Supported Platforms
+
+- **NVIDIA CUDA** — Full support with ncu profiling
+- **NVIDIA Triton** — Full support
+- **AMD HIP** — Supported via `--backend hip`
+- **壁仞 BIRENSUPA** — Supported via `--backend supa` (see BIRENSUPA Knowledge below)
 
 ## When this skill applies
 
@@ -14,11 +21,30 @@ Drive a profile → modify → benchmark → log → commit loop on a GPU kernel
 - "benchmark this kernel against PyTorch"
 - "iterate on this kernel until it's faster"
 - mentions of `ncu`, kernel profiling, GPU speedup target
+- **壁仞 SUPA kernels** — optimize BIRENSUPA kernel code for 壁仞 GPU
 
 Does NOT apply when:
 - User wants to *write* a new kernel from scratch with no optimization target — just write code, no loop.
 - User wants Codex / GPT to review or implement — use `codex:rescue` instead.
 - User wants generic performance advice for code that isn't a GPU kernel.
+
+## BIRENSUPA Knowledge
+
+When optimizing 壁仞 SUPA kernels, consult the knowledge files in `knowledge/`:
+
+- **BIRENSUPA_编程指南_V1.8.0_202507.md** — Core programming model, kernel functions, memory hierarchy, threading model
+- **BIRENSUPA_Driver_安装指南_V1.8.0_202507.md** — Driver installation and setup
+- **壁仞_BRPyTorch_插件用户指南_V1.8.0_202507.md** — PyTorch integration for 壁仞 GPU
+
+### SUPA Programming Model Key Points
+
+- **Kernel declaration**: Use `__global__` for standard kernels, `__global_mega__` for tensor core kernels
+- **Thread hierarchy**: `thread_idx`, `block_idx`, `block_dim`, `grid_dim` (similar to CUDA)
+- **Memory**: `suMallocDevice`, `suMemcpyH2D`, `suMemcpyD2H`, `suFreeDevice`
+- **Kernel launch**: `suLaunchKernel(kernel, grid_dim, block_dim, shared_mem, stream, args...)`
+- **Synchronization**: `suDeviceSynchronize()`, `suStreamSynchronize()`
+- **Compiler**: BRCC (Biren Compiler Collection) — compile with `brcc` command
+- **Environment**: Set `SUPA_VISIBLE_DEVICES` for device selection
 
 ## First action
 

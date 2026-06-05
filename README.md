@@ -1,13 +1,37 @@
-<h1 align="center">AKO4ALL</h1>
-<p align="center"><b>Agentic Kernel Optimization for All</b></p>
+<h1 align="center">AKO4ALL-BIRENSUPA</h1>
+<p align="center"><b>Agentic Kernel Optimization for All — 壁仞 BIRENSUPA Extension</b></p>
 
 <p align="center">
-  <a href="https://tongminglaic.github.io/AKO"><img src="https://img.shields.io/badge/Project-Page-blue" alt="Project Page"></a>
-  <a href="https://github.com/TongmingLAIC/AKO4X"><img src="https://img.shields.io/badge/GitHub-AKO4X-blue?logo=github" alt="AKO4X"></a>
-  <a href="https://tongminglaic.github.io/AKO/assets/ako-tech-report.pdf"><img src="https://img.shields.io/badge/Tech%20Report-PDF-blue" alt="Tech Report"></a>
+  <a href="https://github.com/TongmingLAIC/AKO4ALL"><img src="https://img.shields.io/badge/Fork%20of-AKO4ALL-blue" alt="Fork of AKO4ALL"></a>
+  <a href="https://tongminglaic.github.io/AKO"><img src="https://img.shields.io/badge/Original%20Project-Page-blue" alt="Original Project Page"></a>
+  <a href="https://github.com/TongmingLAIC/AKO4X"><img src="https://img.shields.io/badge/Original-GitHub-blue?logo=github" alt="Original GitHub"></a>
 </p>
 
 <p align="center"><b>If you find our work useful, please consider giving us a star 🌟</b></p>
+
+---
+
+## About This Fork
+
+**This is a forked and extended version of [AKO4ALL](https://github.com/TongmingLAIC/AKO4ALL)** with added support for **壁仞 BIRENSUPA** GPU kernels.
+
+### What's Added
+
+- **BIRENSUPA Backend Support** — Auto-detection and optimization for 壁仞 SUPA kernels
+- **SUPA Programming Knowledge** — Integrated documentation for BIRENSUPA programming model
+- **BRCC Compiler Support** — Compilation guidance for 壁仞's BRCC compiler
+- **SupaProfiler Integration** — Profiling support for 壁仞 GPU
+
+### Original Project
+
+For the original AKO4ALL project (NVIDIA CUDA/Triton optimization), please visit:
+- **GitHub**: https://github.com/TongmingLAIC/AKO4ALL
+- **Project Page**: https://tongminglaic.github.io/AKO
+- **Tech Report**: https://tongminglaic.github.io/AKO/assets/ako-tech-report.pdf
+
+---
+
+## News
 
 <p align="center">
   <img src="assets/speedup_vs_expert.png" alt="Bar chart: AKO4ALL geomean speedup over the FlashInfer expert on four inference operators — GQA decode 1.36x, MLA decode 1.21x, MLA prefill 1.50x, RMSNorm 1.12x — on NVIDIA B200; all four bars clear the 1.0x expert line." width="640" />
@@ -270,7 +294,7 @@ The **[AKO tech report](https://tongminglaic.github.io/AKO/assets/ako-tech-repor
 
 ## Citation
 
-If you find AKO useful, please cite:
+If you find AKO useful, please cite the original work:
 
 ```bibtex
 @misc{ako2026,
@@ -282,9 +306,14 @@ If you find AKO useful, please cite:
 }
 ```
 
+### Acknowledgments
+
+This project is a fork of [AKO4ALL](https://github.com/TongmingLAIC/AKO4ALL) by TongmingLAIC. We extend our gratitude to the original authors for their excellent work on agentic kernel optimization.
+
 ## Acknowledgments
 
 We would like to thank the following open-source projects that inspired and supported the development of AKO:
 
 - [KernelBench](https://github.com/ScalingIntelligence/KernelBench) — for providing the benchmark and evaluation format used by AKO4ALL's built-in evaluator.
 - [autoresearch](https://github.com/karpathy/autoresearch) and [autokernel](https://github.com/RightNow-AI/autokernel) — AKO's design was inspired by their work on autonomous optimization loops.
+- **壁仞科技** — for the BIRENSUPA programming model documentation and support.

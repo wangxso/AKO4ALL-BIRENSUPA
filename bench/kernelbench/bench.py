@@ -885,6 +885,13 @@ def _auto_detect_backend(sol_src: str) -> str:
         return "tilelang"
     if "import cute" in sol_src or "cute_dsl" in sol_src:
         return "cute"
+    # 壁仞 BIRENSUPA detection
+    if "__global__" in sol_src and ("suLaunchKernel" in sol_src or "suMallocDevice" in sol_src or "__SUPA__" in sol_src or "import supa" in sol_src):
+        return "supa"
+    if "import supa" in sol_src or "from supa" in sol_src:
+        return "supa"
+    if "BIRENSUPA" in sol_src or "birensupa" in sol_src.lower():
+        return "supa"
     return "cuda"
 
 
@@ -1088,8 +1095,8 @@ def main():
     parser.add_argument(
         "--backend",
         default=None,
-        choices=["cuda", "triton", "tilelang", "cute", "hip"],
-        help="Backend for kernel compilation. Auto-detected from solution source if omitted.",
+        choices=["cuda", "triton", "tilelang", "cute", "hip", "supa"],
+        help="Backend for kernel compilation. Auto-detected from solution source if omitted. Use 'supa' for 壁仞 BIRENSUPA kernels.",
     )
     parser.add_argument(
         "--num-correct-trials",

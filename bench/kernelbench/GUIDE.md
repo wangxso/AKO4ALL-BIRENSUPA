@@ -94,17 +94,19 @@ Exit code: `0` = correct, `1` = incorrect or failed.
 
 `bench.py` picks the backend by sniffing the solution source: `@triton.jit` /
 `import triton` → `triton`; `import tilelang` → `tilelang`; `import cute` /
-`cute_dsl` → `cute`; otherwise `cuda` (exec-based loader handling raw CUDA +
+`cute_dsl` → `cute`; `__SUPA__` / `suLaunchKernel` / `import supa` → `supa`;
+otherwise `cuda` (exec-based loader handling raw CUDA +
 `cpp_extension.load[_inline]`). Pass `--backend <name>` only to override the
 sniff — useful for explicit HIP labelling or for mixed-backend solutions
 where the first match is wrong. The chosen backend is printed as
 `BACKEND: <name> (auto|explicit)` in the output.
 
-The two loaders differ in how they execute solution code: `cuda` / `hip` use
+The loaders differ in how they execute solution code: `cuda` / `hip` use
 `exec()` (which rejects `@triton.jit` decorators with `@jit functions should
 be defined in a Python file`), while `triton` / `tilelang` / `cute` use
 tempfile + `importlib` so `@jit` source inspection works. `cuda` and `hip`
-are loader-equivalent; the distinction is informational only.
+are loader-equivalent; the distinction is informational only. `supa` uses the
+exec-based path similar to `cuda`.
 
 | Solution language | Backend chosen |
 |-------------------|----------------|
@@ -113,6 +115,7 @@ are loader-equivalent; the distinction is informational only.
 | TileLang | `tilelang` |
 | CuTe | `cute` |
 | HIP | `cuda` (pass `--backend hip` explicitly if labelling matters) |
+| 壁仞 BIRENSUPA (`__global__`, `suLaunchKernel`, `import supa`) | `supa` |
 
 ## Solution File Requirements
 
