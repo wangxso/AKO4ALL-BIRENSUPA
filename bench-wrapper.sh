@@ -12,6 +12,13 @@ REMOTE_HOST="${REMOTE_HOST:-}"
 REMOTE_DIR="${REMOTE_DIR:-/tmp/ako4all_bench}"
 REMOTE_PYTHON="${REMOTE_PYTHON:-python3}"
 
+# --- Docker Container Configuration ---
+# Set DOCKER_CONTAINER to execute inside a Docker container
+# Example: export DOCKER_CONTAINER="biren-vllm"
+# Example: export DOCKER_CONTAINER="my-gpu-container"
+DOCKER_CONTAINER="${DOCKER_CONTAINER:-}"
+DOCKER_WORK_DIR="${DOCKER_WORK_DIR:-/workspace}"
+
 # Detect toolkit-vs-torch ambiguity and warn — don't auto-set CUDA_HOME.
 # Auto-set is unreliable when active conda env != target python env (e.g.,
 # base shell running envs/X/bin/python directly), and a wrong CUDA_HOME
@@ -41,6 +48,24 @@ run_remote() {
     fi
 }
 
+# --- Docker execution function ---
+run_in_docker() {
+    local cmd="$1"
+    if [ -n "$DOCKER_CONTAINER" ]; then
+        echo "[bench-wrapper] Executing in Docker container: $DOCKER_CONTAINER"
+        if [ -n "$REMOTE_HOST" ]; then
+            # Remote Docker execution
+            ssh -o StrictHostKeyChecking=no "$REMOTE_HOST" \
+                "docker exec -w $DOCKER_WORK_DIR $DOCKER_CONTAINER bash -c '$cmd'"
+        else
+            # Local Docker execution
+            docker exec -w "$DOCKER_WORK_DIR" "$DOCKER_CONTAINER" bash -c "$cmd"
+        fi
+    else
+        eval "$cmd"
+    fi
+}
+
 # --- Sync files to remote ---
 sync_to_remote() {
     if [ -n "$REMOTE_HOST" ]; then
@@ -50,6 +75,13 @@ sync_to_remote() {
             solution/ scripts/ bench/ knowledge/ "$REMOTE_HOST:$REMOTE_DIR/"
         [ -f HINTS.md ] && rsync -avz HINTS.md "$REMOTE_HOST:$REMOTE_DIR/"
         [ -f ITERATIONS.md ] && rsync -avz ITERATIONS.md "$REMOTE_HOST:$REMOTE_DIR/"
+
+        # Copy files into Docker container if specified
+        if [ -n "$DOCKER_CONTAINER" ]; then
+            echo "[bench-wrapper] Copying files to Docker container: $DOCKER_CONTAINER"
+            ssh -o StrictHostKeyChecking=no "$REMOTE_HOST" \
+                "docker cp $REMOTE_DIR/. $DOCKER_CONTAINER:$DOCKER_WORK_DIR/"
+        fi
     fi
 }
 
@@ -57,19 +89,27 @@ sync_to_remote() {
 fetch_from_remote() {
     if [ -n "$REMOTE_HOST" ]; then
         echo "[bench-wrapper] Fetching results from $REMOTE_HOST"
-        rsync -avz "$REMOTE_HOST:$REMOTE_DIR/trajectory/" trajectory/ 2>/dev/null || true
-        rsync -avz "$REMOTE_HOST:$REMOTE_DIR/_bench_output.txt" . 2>/dev/null || true
+        if [ -n "$DOCKER_CONTAINER" ]; then
+            # Fetch from Docker container
+            ssh -o StrictHostKeyChecking=no "$REMOTE_HOST" \
+                "docker cp $DOCKER_CONTAINER:$DOCKER_WORK_DIR/trajectory/ trajectory/ 2>/dev/null || true"
+            ssh -o StrictHostKeyChecking=no "$REMOTE_HOST" \
+                "docker cp $DOCKER_CONTAINER:$DOCKER_WORK_DIR/_bench_output.txt . 2>/dev/null || true"
+        else
+            rsync -avz "$REMOTE_HOST:$REMOTE_DIR/trajectory/" trajectory/ 2>/dev/null || true
+            rsync -avz "$REMOTE_HOST:$REMOTE_DIR/_bench_output.txt" . 2>/dev/null || true
+        fi
     fi
 }
 
 # --- Main execution ---
-if [ -n "$REMOTE_HOST" ]; then
-    # Remote execution mode
+if [ -n "$REMOTE_HOST" ] || [ -n "$DOCKER_CONTAINER" ]; then
+    # Remote/Docker execution mode
     sync_to_remote
 
-    # Run benchmark remotely
+    # Run benchmark remotely/in Docker
     set +e
-    run_remote "$REMOTE_PYTHON bench/kernelbench/bench.py --ref <ref> --solution solution/<kernel> --verbose 2>&1 | tee _bench_output.txt"
+    run_in_docker "$REMOTE_PYTHON bench/kernelbench/bench.py --ref <ref> --solution solution/<kernel> --verbose 2>&1 | tee _bench_output.txt"
     BENCH_EXIT=$?
     set -e
 

@@ -50,6 +50,26 @@ REMOTE_DIR="/tmp/ako4all_bench"
 REMOTE_PYTHON="python3"
 ```
 
+### Docker Container Settings (Optional)
+
+```bash
+# Docker container name
+DOCKER_CONTAINER="biren-vllm"
+
+# Working directory inside container
+DOCKER_WORK_DIR="/workspace/wangxso/zju-biren-vllm"
+```
+
+### Example: 壁仞 vLLM Container
+
+```bash
+# For remote Docker container at 10.110.10.11
+REMOTE_HOST="zjdx@10.110.10.11"
+DOCKER_CONTAINER="biren-vllm"
+DOCKER_WORK_DIR="/workspace/wangxso/zju-biren-vllm"
+REMOTE_PYTHON="python3"
+```
+
 ### Remote Environment Setup
 
 On the remote server, ensure:
@@ -57,11 +77,13 @@ On the remote server, ensure:
 - Python 3.10+ with PyTorch
 - Required dependencies (triton, etc.)
 - SSH key-based authentication configured
+- Docker installed and user has access (if using Docker)
 
 ### Remote Workflow
 
 1. Files are synced via `rsync` to `REMOTE_DIR`
-2. Benchmark executes on remote GPU
+2. Files copied into Docker container (if specified)
+3. Benchmark executes on remote GPU
 3. Results fetched back to local `trajectory/`
 
 ### Example

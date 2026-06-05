@@ -1,0 +1,86 @@
+# Remote Execution Configuration
+# Copy this file to your workspace and customize
+
+# ============================================================
+# Remote Server Configuration
+# ============================================================
+
+# SSH connection to remote server
+# Format: user@hostname or user@ip
+REMOTE_HOST="zjdx@10.110.10.11"
+
+# Remote working directory for benchmark files
+REMOTE_DIR="/tmp/ako4all_bench"
+
+# Remote Python executable
+REMOTE_PYTHON="python3"
+
+# ============================================================
+# Docker Container Configuration (Optional)
+# ============================================================
+
+# Docker container name or ID
+# Leave empty to execute directly on remote host
+DOCKER_CONTAINER="biren-vllm"
+
+# Working directory inside Docker container
+DOCKER_WORK_DIR="/workspace/wangxso/zju-biren-vllm"
+
+# ============================================================
+# Usage Instructions
+# ============================================================
+
+# Method 1: Export variables before running claude
+# export REMOTE_HOST="zjdx@10.110.10.11"
+# export DOCKER_CONTAINER="biren-vllm"
+# export DOCKER_WORK_DIR="/workspace/wangxso/zju-biren-vllm"
+# claude
+
+# Method 2: Source this file
+# source remote-config.sh
+# claude
+
+# Method 3: Add to HINTS.md
+# Copy the export commands to HINTS.md
+
+# ============================================================
+# SSH Setup (First Time)
+# ============================================================
+
+# 1. Generate SSH key (if not exists)
+# ssh-keygen -t rsa -b 4096
+
+# 2. Copy key to remote server
+# ssh-copy-id zjdx@10.110.10.11
+
+# 3. Test connection
+# ssh zjdx@10.110.10.11 "echo 'Connection successful'"
+
+# ============================================================
+# Docker Setup (First Time)
+# ============================================================
+
+# 1. Test Docker access
+# ssh zjdx@10.110.10.11 "docker ps | grep biren-vllm"
+
+# 2. Verify vllm path exists
+# ssh zjdx@10.110.10.11 "ls -la /workspace/wangxso/zju-biren-vllm"
+
+# ============================================================
+# Troubleshooting
+# ============================================================
+
+# If SSH connection fails:
+# - Check SSH key: ssh -v zjdx@10.110.10.11
+# - Check firewall settings
+# - Verify username and password
+
+# If Docker execution fails:
+# - Check container is running: docker ps
+# - Check user permissions: groups zjdx
+# - Try manual docker exec: docker exec -it biren-vllm bash
+
+# If benchmark fails:
+# - Check Python path: which python3
+# - Check dependencies: pip list | grep torch
+# - Check GPU access: nvidia-smi (NVIDIA) or brsmi (壁仞)

@@ -192,16 +192,28 @@ export REMOTE_DIR="/tmp/ako4all_bench"   # Remote working directory
 export REMOTE_PYTHON="python3"           # Remote Python
 ```
 
+For Docker containers on remote server:
+
+```bash
+# Docker container execution
+export REMOTE_HOST="zjdx@10.110.10.11"           # SSH connection
+export DOCKER_CONTAINER="biren-vllm"              # Docker container name
+export DOCKER_WORK_DIR="/workspace/wangxso/zju-biren-vllm"  # Container working dir
+export REMOTE_PYTHON="python3"                    # Python in container
+```
+
 **How it works:**
 1. Solution files are synced to remote via `rsync`
-2. Benchmark runs on remote GPU via SSH
-3. Results are fetched back to local machine
-4. Trajectory stored locally in `trajectory/`
+2. Files copied into Docker container (if specified)
+3. Benchmark runs on remote GPU via SSH/Docker
+4. Results are fetched back to local machine
+5. Trajectory stored locally in `trajectory/`
 
 **Requirements:**
 - SSH key-based authentication (no password prompts)
 - `rsync` on both local and remote machines
 - Remote GPU with drivers installed (NVIDIA or 壁仞)
+- Docker installed on remote (if using container mode)
 
 **Example workflow:**
 
