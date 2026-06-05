@@ -5,3 +5,4 @@ trajectory/
 scripts/
 _bench_output.txt
 .claude/
+knowledge/*.md
